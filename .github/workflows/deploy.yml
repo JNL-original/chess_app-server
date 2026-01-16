@@ -42,5 +42,5 @@ jobs:
           script: |
             fuser -k 25252/tcp || true
             cd /var/servers/chess
-            mv target/*.jar app.jar || true
+            mv *.jar app.jar || true
             nohup java -jar app.jar > log.txt 2>&1 &

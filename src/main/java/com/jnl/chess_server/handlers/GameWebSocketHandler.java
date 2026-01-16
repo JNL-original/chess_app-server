@@ -85,6 +85,7 @@ public class GameWebSocketHandler extends TextWebSocketHandler {
         if(roomId.equals("new")){
             if(type.equals("create")) {
                 OnlineConfig config = objectMapper.treeToValue(json.get("config"), OnlineConfig.class);
+                if(config == null) return;
                 roomId = gameRepository.createRoom(config);
                 Map<String, String> response = Map.of(
                         "type", "new_room",
@@ -275,10 +276,10 @@ public class GameWebSocketHandler extends TextWebSocketHandler {
         if(!Objects.equals(prev.getAlive(), cur.getAlive())) changes.put("alive", cur.getAlive());
         if(!Objects.equals(prev.getKings(), cur.getKings())) changes.put("kings", cur.getKings());
         if(!Objects.equals(prev.getBoard(), cur.getBoard())) {
-            Map<String, Object> tiles = new HashMap<>();
+            Map<Integer, Object> tiles = new HashMap<>();
             for(int i = 0; i < BoardData.totalTiles; i++){
                 if(!Objects.equals(prev.getBoard().get(i), cur.getBoard().get(i))){
-                    tiles.put(Integer.toString(i), cur.getBoard().get(i));
+                    tiles.put(i, cur.getBoard().get(i));
                 }
             }
             changes.put("tiles", tiles);
