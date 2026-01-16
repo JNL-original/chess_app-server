@@ -51,7 +51,7 @@ public class GameState {
                 .alive(List.of(true, true, true, true))
                 .enPassant(createEmptyEnPassant())
                 .commands(commands)
-                .status(GameStatus.ACTIVE)
+                .status(GameStatus.LOBBY)
                 .promotionPawn(-1)
                 .myPlayerIndex(-1)
                 .turn(0)
