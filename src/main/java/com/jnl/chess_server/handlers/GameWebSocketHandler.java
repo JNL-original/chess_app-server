@@ -246,6 +246,100 @@ public class GameWebSocketHandler extends TextWebSocketHandler {
                     }
                 });
             }
+            if(type.equals("change")){
+                if(!room.getPlayerTokens().containsValue(token)
+                        || !room.getState().getStatus().equals(GameStatus.LOBBY)) return;
+
+                Integer color = objectMapper.treeToValue(json.get("color"), Integer.class);//Может быть null
+                String name = objectMapper.treeToValue(json.get("name"), String.class);//Может быть null
+
+                int playerIndex = room.getPlayerIndex(token);
+                OnlineConfig config = room.getState().getConfig();
+
+                Map<String, Object> response = new HashMap<>();
+                response.put("type", "lobby");
+
+                room.getState().setTurn(room.getState().getTurn()+1);
+
+                response.put("turn", room.getState().getTurn());
+                response.put("ready", room.getReadyIndexes());
+
+                if(color != null) {
+                    boolean canChange = true;
+                    Map<Integer, String> playerTokens = room.getPlayerTokens();
+                    for(int i = 0; i < 4; i ++){
+                        if(!color.equals(config.getPlayerColors().get(i))) continue;
+                        if(playerTokens.get(i) != null){
+                            canChange = false;
+                        }
+                        else{
+                            if(!config.getPlayerColors().containsValue(0xFFFFEB3B)){
+                                config.getPlayerColors().put(i, 0xFFFFEB3B);
+                                continue;
+                            }
+                            if(!config.getPlayerColors().containsValue(0xFF2196F3)){
+                                config.getPlayerColors().put(i, 0xFF2196F3);
+                                continue;
+                            }
+                            if(!config.getPlayerColors().containsValue(0xFFF44336)){
+                                config.getPlayerColors().put(i, 0xFFF44336);
+                                continue;
+                            }
+                            if(!config.getPlayerColors().containsValue(0xFF4CAF50)){
+                                config.getPlayerColors().put(i, 0xFF4CAF50);
+                            }
+                        }
+                    }
+
+                    if(canChange){
+                        config.getPlayerColors().put(playerIndex, color);
+                        response.put("colors", config.getPlayerColors());
+                    }
+                }
+                if(name != null) {
+                    boolean canChange = true;
+                    Map<Integer, String> playerTokens = room.getPlayerTokens();
+                    for(int i = 0; i < 4; i ++){
+                        if(!name.equals(config.getPlayerNames().get(i))) continue;
+                        if(playerTokens.get(i) != null){
+                            canChange = false;
+                        }
+                        else{
+                            if(!config.getPlayerNames().containsValue("игрок 1")){
+                                config.getPlayerNames().put(i, "игрок 1");
+                                continue;
+                            }
+                            if(!config.getPlayerNames().containsValue("игрок 2")){
+                                config.getPlayerNames().put(i, "игрок 2");
+                                continue;
+                            }
+                            if(!config.getPlayerNames().containsValue("игрок 3")){
+                                config.getPlayerNames().put(i, "игрок 3");
+                                continue;
+                            }
+                            if(!config.getPlayerNames().containsValue("игрок 4")){
+                                config.getPlayerNames().put(i, "игрок 4");
+                            }
+                        }
+                    }
+
+                    if(canChange){
+                        config.getPlayerNames().put(playerIndex, name);
+                        response.put("names", config.getPlayerNames());
+                    }
+                }
+
+                TextMessage jsonMessage =  new TextMessage(objectMapper.writeValueAsString(response));
+                room.getSessions().forEach(s -> {
+                    try {
+                        if (s.isOpen()) {
+                            s.sendMessage(jsonMessage);
+                        }
+                    } catch (IOException e) {
+                        System.err.println("Не удалось отправить сообщение сессии " + s.getId());
+                    }
+                });
+            }
         }
 
     }
