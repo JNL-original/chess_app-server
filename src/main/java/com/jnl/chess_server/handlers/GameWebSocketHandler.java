@@ -74,6 +74,7 @@ public class GameWebSocketHandler extends TextWebSocketHandler {
 
     @Override
     protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
+        System.out.println(message);
         // Здесь ты будешь получать ходы от Flutter
         String roomId = (String) session.getAttributes().get("roomId");
         String token = (String) session.getAttributes().get("token");
@@ -352,7 +353,7 @@ public class GameWebSocketHandler extends TextWebSocketHandler {
     @Override
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
         String roomId = (String) session.getAttributes().get("roomId");
-        if (roomId != null && !roomId.equals("new")) {
+        if (roomId != null && gameRepository.getRoom(roomId) != null) {
             GameRoom room = gameRepository.getRoom(roomId);
             if(room.getState().getStatus().equals(GameStatus.LOBBY)) room.removePlayer(session);
             else room.removeSession(session);
