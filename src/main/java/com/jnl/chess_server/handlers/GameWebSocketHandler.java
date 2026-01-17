@@ -190,7 +190,7 @@ public class GameWebSocketHandler extends TextWebSocketHandler {
                 if(!room.getPlayerTokens().containsValue(token)
                         || !room.getState().getStatus().equals(GameStatus.LOBBY)) return;
 
-                Integer color = objectMapper.treeToValue(json.get("color"), Integer.class);//Может быть null
+                Long color = objectMapper.treeToValue(json.get("color"), Long.class);//Может быть null
                 String name = objectMapper.treeToValue(json.get("name"), String.class);//Может быть null
 
                 int playerIndex = room.getPlayerIndex(token);
@@ -256,7 +256,7 @@ public class GameWebSocketHandler extends TextWebSocketHandler {
                 if(!room.getPlayerTokens().containsValue(token)
                         || !room.getState().getStatus().equals(GameStatus.LOBBY)) return;
 
-                Integer color = objectMapper.treeToValue(json.get("color"), Integer.class);//Может быть null
+                Long color = objectMapper.treeToValue(json.get("color"), Long.class);//Может быть null
                 String name = objectMapper.treeToValue(json.get("name"), String.class);//Может быть null
 
                 int playerIndex = room.getPlayerIndex(token);
@@ -279,20 +279,20 @@ public class GameWebSocketHandler extends TextWebSocketHandler {
                             canChange = false;
                         }
                         else{
-                            if(!config.getPlayerColors().containsValue(0xFFFFEB3B)){
-                                config.getPlayerColors().put(i, 0xFFFFEB3B);
+                            if(!config.getPlayerColors().containsValue(0xFFFFEB3BL)){
+                                config.getPlayerColors().put(i, 0xFFFFEB3BL);
                                 continue;
                             }
-                            if(!config.getPlayerColors().containsValue(0xFF2196F3)){
-                                config.getPlayerColors().put(i, 0xFF2196F3);
+                            if(!config.getPlayerColors().containsValue(0xFF2196F3L)){
+                                config.getPlayerColors().put(i, 0xFF2196F3L);
                                 continue;
                             }
-                            if(!config.getPlayerColors().containsValue(0xFFF44336)){
-                                config.getPlayerColors().put(i, 0xFFF44336);
+                            if(!config.getPlayerColors().containsValue(0xFFF44336L)){
+                                config.getPlayerColors().put(i, 0xFFF44336L);
                                 continue;
                             }
-                            if(!config.getPlayerColors().containsValue(0xFF4CAF50)){
-                                config.getPlayerColors().put(i, 0xFF4CAF50);
+                            if(!config.getPlayerColors().containsValue(0xFF4CAF50L)){
+                                config.getPlayerColors().put(i, 0xFF4CAF50L);
                             }
                         }
                     }

@@ -14,7 +14,7 @@ import java.util.Map;
 @AllArgsConstructor
 public class OnlineConfig {
     // Пользовательский интерфейс (цвета храним как HEX-инты)
-    private Map<Integer, Integer> playerColors;
+    private Map<Integer, Long> playerColors;
     private Map<Integer, String> playerNames;
 
     // Логика программы
@@ -41,7 +41,7 @@ public class OnlineConfig {
     // Значения по умолчанию (аналог конструктора в Dart)
     public static OnlineConfig createDefault() {
         return OnlineConfig.builder()
-                .playerColors(Map.of(-1, 0xFF9E9E9E, 0, 0xFFFFEB3B, 1, 0xFF2196F3, 2, 0xFFF44336, 3, 0xFF4CAF50))
+                .playerColors(Map.of(-1, 0xFF9E9E9EL, 0, 0xFFFFEB3BL, 1, 0xFF2196F3L, 2, 0xFFF44336L, 3, 0xFF4CAF50L))
                 .playerNames(Map.of(0, "игрок 1", 1, "игрок 2", 2, "игрок 3", 3, "игрок 4"))
                 .commands(Command.NONE)
                 .pawnPromotion(Promotion.QUEEN)
