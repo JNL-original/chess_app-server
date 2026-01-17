@@ -98,7 +98,12 @@ public class GameWebSocketHandler extends TextWebSocketHandler {
 
         // 2. Достаем контекст из атрибутов
         GameRoom room = gameRepository.getRoom(roomId);
-
+        if(room == null){
+            Map<String, Object> response = new HashMap<>();
+            response.put("type", "notExist");
+            if(session.isOpen()) session.sendMessage(new TextMessage(objectMapper.writeValueAsString(response)));
+            return;
+        }
 
         synchronized (room){
             if(type.equals("connect")){
