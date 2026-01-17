@@ -347,7 +347,7 @@ public class GameWebSocketHandler extends TextWebSocketHandler {
     @Override
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
         String roomId = (String) session.getAttributes().get("roomId");
-        if (roomId != null) {
+        if (roomId != null && !roomId.equals("new")) {
             GameRoom room = gameRepository.getRoom(roomId);
             if(room.getState().getStatus().equals(GameStatus.LOBBY)) room.removePlayer(session);
             else room.removeSession(session);
