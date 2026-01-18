@@ -42,7 +42,7 @@ public class GameService {
         ChessPiece piece = board.get(fromIndex);
         if (piece == null) return null;
         //TODO Здесь должна быть проверка на валидность
-        //if(!getTruePossibleMoves(fromIndex, currentState).contains(toIndex)) return null;
+        if(!getTruePossibleMoves(fromIndex, currentState).contains(toIndex)) return null;
 
         if (board.get(toIndex) != null &&
                 board.get(toIndex).getOwner() == currentState.getCurrentPlayer() &&
@@ -143,14 +143,12 @@ public class GameService {
         return checkNextTurn(state);
     }
     //Не меняем состояние
-    private boolean onFire(int index, List<ChessPiece> board, GameState state) {
-        ChessPiece piece = board.get(index);
-        if (piece == null) return false;
+    private boolean onFire(int index, List<ChessPiece> board, GameState state, int owner) {
 
         for (int i = 0; i < board.size(); i++) {
             ChessPiece enemyPiece = board.get(i);
             if (enemyPiece != null &&
-                    state.isEnemies(enemyPiece.getOwner(), piece.getOwner())) {
+                    state.isEnemies(enemyPiece.getOwner(), owner)) {
                 List<ChessPiece> newBoard = new ArrayList<>(board);
                 GameState tempState = state.toBuilder().board(newBoard).build();
                 if (enemyPiece.getPossibleMoves(i, tempState).contains(index)) {
@@ -188,7 +186,7 @@ public class GameService {
                 currentKingPos = move;
             }
 
-            if (!onFire(currentKingPos, draw, state)) {
+            if (!onFire(currentKingPos, draw, state, state.getCurrentPlayer())) {
                 validMoves.add(move);
             }//мелкое изменение логики, здесь мы смотрим от обратного
 
@@ -258,17 +256,17 @@ public class GameService {
 
         if (rookIndex < kingIndex) {
             switch (player) {
-                case 0 -> { for (int i = kingIndex; i > kingIndex - 3; i--) if (onFire(i, state.getBoard(), state)) return false; }
-                case 1 -> { for (int i = kingIndex; i > kingIndex - 3 * boardSize; i -= boardSize) if (onFire(i, state.getBoard(), state)) return false; }
-                case 2 -> { for (int i = kingIndex; i > kingIndex - 3; i--) if (onFire(i, state.getBoard(), state)) return false; }
-                case 3 -> { for (int i = kingIndex; i > kingIndex - 3 * boardSize; i -= boardSize) if (onFire(i, state.getBoard(), state)) return false; }
+                case 0 -> { for (int i = kingIndex; i > kingIndex - 3; i--) if (onFire(i, state.getBoard(), state, state.getCurrentPlayer())) return false; }
+                case 1 -> { for (int i = kingIndex; i > kingIndex - 3 * boardSize; i -= boardSize) if (onFire(i, state.getBoard(), state, state.getCurrentPlayer())) return false; }
+                case 2 -> { for (int i = kingIndex; i > kingIndex - 3; i--) if (onFire(i, state.getBoard(), state, state.getCurrentPlayer())) return false; }
+                case 3 -> { for (int i = kingIndex; i > kingIndex - 3 * boardSize; i -= boardSize) if (onFire(i, state.getBoard(), state, state.getCurrentPlayer())) return false; }
             }
         } else {
             switch (player) {
-                case 0 -> { for (int i = kingIndex; i < kingIndex + 3; i++) if (onFire(i, state.getBoard(), state)) return false; }
-                case 1 -> { for (int i = kingIndex; i < kingIndex + 3 * boardSize; i += boardSize) if (onFire(i, state.getBoard(), state)) return false; }
-                case 2 -> { for (int i = kingIndex; i < kingIndex + 3; i++) if (onFire(i, state.getBoard(), state)) return false; }
-                case 3 -> { for (int i = kingIndex; i < kingIndex + 3 * boardSize; i += boardSize) if (onFire(i, state.getBoard(), state)) return false; }
+                case 0 -> { for (int i = kingIndex; i < kingIndex + 3; i++) if (onFire(i, state.getBoard(), state, state.getCurrentPlayer())) return false; }
+                case 1 -> { for (int i = kingIndex; i < kingIndex + 3 * boardSize; i += boardSize) if (onFire(i, state.getBoard(), state, state.getCurrentPlayer())) return false; }
+                case 2 -> { for (int i = kingIndex; i < kingIndex + 3; i++) if (onFire(i, state.getBoard(), state, state.getCurrentPlayer())) return false; }
+                case 3 -> { for (int i = kingIndex; i < kingIndex + 3 * boardSize; i += boardSize) if (onFire(i, state.getBoard(), state, state.getCurrentPlayer())) return false; }
             }
         }
         return true;
@@ -297,7 +295,7 @@ public class GameService {
                     board.set(move, piece);
                     int kingPos = "king".equals(piece.getType()) ? move : kings.get(state.getCurrentPlayer());
 
-                    boolean safe = !onFire(kingPos, board, state);
+                    boolean safe = !onFire(kingPos, board, state, state.getCurrentPlayer());
 
                     // Откат
                     board.set(move, temp);
@@ -308,7 +306,7 @@ public class GameService {
             }
         }
 
-        if (onFire(kings.get(state.getCurrentPlayer()), board, state)) {
+        if (onFire(kings.get(state.getCurrentPlayer()), board, state, state.getCurrentPlayer())) {
             return Stalemate.CHECKMATE;
         } else {
             return state.ifStalemate();
