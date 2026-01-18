@@ -415,15 +415,13 @@ public class GameWebSocketHandler extends TextWebSocketHandler {
         if(!Objects.equals(prev.getEnPassant(), cur.getEnPassant())) changes.put("enPassant", cur.getEnPassant());
         if(!Objects.equals(prev.getAlive(), cur.getAlive())) changes.put("alive", cur.getAlive());
         if(!Objects.equals(prev.getKings(), cur.getKings())) changes.put("kings", cur.getKings());
-        if(!Objects.equals(prev.getBoard(), cur.getBoard())) {
-            Map<Integer, Object> tiles = new HashMap<>();
-            for(int i = 0; i < BoardData.totalTiles; i++){
-                if(!Objects.equals(prev.getBoard().get(i), cur.getBoard().get(i))){
-                    tiles.put(i, cur.getBoard().get(i));
-                }
+        Map<Integer, Object> tiles = new HashMap<>();
+        for(int i = 0; i < BoardData.totalTiles; i++){
+            if(!Objects.equals(prev.getBoard().get(i), cur.getBoard().get(i))){
+                tiles.put(i, cur.getBoard().get(i));
             }
-            changes.put("tiles", tiles);
         }
+        changes.put("tiles", tiles);
         return changes;
     }
 }
