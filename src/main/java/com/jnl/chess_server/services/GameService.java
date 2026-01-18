@@ -18,7 +18,7 @@ public class GameService {
     public GameState handleMove(GameState currentState, int fromIndex, int toIndex){
         GameState checkValid = makeMove(currentState, fromIndex, toIndex);
         if(checkValid == null) return null;
-        return nextPlayer(currentState);
+        return nextPlayer(checkValid);
     }
     //TODO Меняем состояние, возвращаем ссылку на полученное состояние через метод nextPlayer. Возвращаем null как ошибку
     public GameState continueGameAfterPromotion(ChessPiece piece, GameState state){
@@ -151,7 +151,8 @@ public class GameService {
             ChessPiece enemyPiece = board.get(i);
             if (enemyPiece != null &&
                     state.isEnemies(enemyPiece.getOwner(), piece.getOwner())) {
-                GameState tempState = state.toBuilder().board(board).build();
+                List<ChessPiece> newBoard = new ArrayList<>(board);
+                GameState tempState = state.toBuilder().board(newBoard).build();
                 if (enemyPiece.getPossibleMoves(i, tempState).contains(index)) {
                     return true;
                 }
