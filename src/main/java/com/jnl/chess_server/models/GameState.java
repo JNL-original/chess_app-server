@@ -1,5 +1,6 @@
 package com.jnl.chess_server.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.jnl.chess_server.models.enums.Command;
 import com.jnl.chess_server.models.enums.GameStatus;
 import com.jnl.chess_server.models.enums.Stalemate;
@@ -111,6 +112,7 @@ public class GameState {
 
         return config.getCommandOnOneStalemate();
     }
+    @JsonIgnore
     public List<ChessPiece> getBoardCopy() {
         if (this.board == null) return null;
         List<ChessPiece> copy = new ArrayList<>(this.board.size());
@@ -120,14 +122,15 @@ public class GameState {
         }
         return copy;
     }
+    @JsonIgnore
     public List<Integer> getKingsCopy() {
         return this.kings == null ? null : new ArrayList<>(this.kings);
     }
-
+    @JsonIgnore
     public List<Boolean> getAliveCopy() {
         return this.alive == null ? null : new ArrayList<>(this.alive);
     }
-
+    @JsonIgnore
     public Map<Integer, List<Integer>> getEnPassantCopy() {
         if (this.enPassant == null) return null;
         Map<Integer, List<Integer>> copy = new HashMap<>();
