@@ -114,7 +114,7 @@ public class GameWebSocketHandler extends TextWebSocketHandler {
                 Map<String, Object> response = new HashMap<>();
 
                 response.put("type", "sync");
-                response.put("data", room.getState().toBuilder().myPlayerIndex(room.getPlayerIndex(token)));//-1 если зритель
+                response.put("data", room.getState().toBuilder().myPlayerIndex(room.getPlayerIndex(token)).build());//-1 если зритель
                 if(room.getState().getStatus().equals(GameStatus.LOBBY)) response.put("ready", room.getReadyIndexes());
 
                 TextMessage jsonMessage =  new TextMessage(objectMapper.writeValueAsString(response));
