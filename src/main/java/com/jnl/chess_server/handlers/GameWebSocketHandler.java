@@ -157,7 +157,12 @@ public class GameWebSocketHandler extends TextWebSocketHandler {
                 if(fromIndex == null || toIndex == null) return;
 
                 room.getState().setTurn(room.getState().getTurn()+1);//увеличиваю контрольно число
-                GameState prevState = room.getState().toBuilder().build();
+                GameState prevState = room.getState().toBuilder()
+                        .board(room.getState().getBoardCopy())
+                        .kings(room.getState().getKingsCopy())
+                        .alive(room.getState().getAliveCopy())
+                        .enPassant(room.getState().getEnPassantCopy())
+                        .build();
                 try{
                     GameState newState = gameService.handleMove(room.getState(), fromIndex, toIndex);
                     if(newState == null) return;
@@ -189,7 +194,12 @@ public class GameWebSocketHandler extends TextWebSocketHandler {
                 ChessPiece piece = objectMapper.treeToValue(json.get("who"), ChessPiece.class);
                 if(piece == null) return;
                 room.getState().setTurn(room.getState().getTurn()+1);//увеличиваю контрольно число
-                GameState prevState = room.getState().toBuilder().build();
+                GameState prevState = room.getState().toBuilder()
+                        .board(room.getState().getBoardCopy())
+                        .kings(room.getState().getKingsCopy())
+                        .alive(room.getState().getAliveCopy())
+                        .enPassant(room.getState().getEnPassantCopy())
+                        .build();
                 try{
                     GameState newState = gameService.continueGameAfterPromotion(piece, room.getState());
                     if(newState == null) return;
