@@ -74,7 +74,6 @@ public class GameWebSocketHandler extends TextWebSocketHandler {
 
     @Override
     protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
-        System.out.println(message);
         // Здесь ты будешь получать ходы от Flutter
         String roomId = (String) session.getAttributes().get("roomId");
         String token = (String) session.getAttributes().get("token");
@@ -82,7 +81,7 @@ public class GameWebSocketHandler extends TextWebSocketHandler {
         JsonNode json = objectMapper.readTree(message.getPayload());
         String type = json.path("type").asText(null);
         if(type == null) return;
-
+        System.out.println("From client" + type + " size " + message.getPayloadLength());
         if(roomId.equals("new")){
             if(type.equals("create")) {
                 OnlineConfig config = objectMapper.treeToValue(json.get("config"), OnlineConfig.class);
@@ -102,7 +101,10 @@ public class GameWebSocketHandler extends TextWebSocketHandler {
         if(room == null){
             Map<String, Object> response = new HashMap<>();
             response.put("type", "notExist");
-            if(session.isOpen()) session.sendMessage(new TextMessage(objectMapper.writeValueAsString(response)));
+            if(session.isOpen()) {
+                session.sendMessage(new TextMessage(objectMapper.writeValueAsString(response)));
+                System.out.println("To client notExist size");
+            }
             return;
         }
 
@@ -117,7 +119,10 @@ public class GameWebSocketHandler extends TextWebSocketHandler {
 
                 TextMessage jsonMessage =  new TextMessage(objectMapper.writeValueAsString(response));
                 try {
-                    if (session.isOpen()) session.sendMessage(jsonMessage);
+                    if (session.isOpen()) {
+                        session.sendMessage(jsonMessage);
+                        System.out.println("To client sync size " + jsonMessage.getPayloadLength());
+                    }
                 } catch (IOException e) {
                     System.err.println("Не удалось отправить сообщение сессии " + session.getId());
                 }
@@ -150,6 +155,7 @@ public class GameWebSocketHandler extends TextWebSocketHandler {
                     try {
                         if (s.isOpen()) {
                             s.sendMessage(jsonMessage);
+                            System.out.println("To client update size " + jsonMessage.getPayloadLength());
                         }
                     } catch (IOException e) {
                         System.err.println("Не удалось отправить сообщение сессии " + s.getId());
@@ -180,6 +186,7 @@ public class GameWebSocketHandler extends TextWebSocketHandler {
                     try {
                         if (s.isOpen()) {
                             s.sendMessage(jsonMessage);
+                            System.out.println("To client update size " + jsonMessage.getPayloadLength());
                         }
                     } catch (IOException e) {
                         System.err.println("Не удалось отправить сообщение сессии " + s.getId());
@@ -224,6 +231,7 @@ public class GameWebSocketHandler extends TextWebSocketHandler {
                     try {
                         if (s.isOpen()) {
                             s.sendMessage(jsonMessage);
+                            System.out.println("To client lobby size " + jsonMessage.getPayloadLength());
                         }
                     } catch (IOException e) {
                         System.err.println("Не удалось отправить сообщение сессии " + s.getId());
@@ -246,6 +254,7 @@ public class GameWebSocketHandler extends TextWebSocketHandler {
                     try {
                         if (s.isOpen()) {
                             s.sendMessage(jsonMessage);
+                            System.out.println("To client lobby size " + jsonMessage.getPayloadLength());
                         }
                     } catch (IOException e) {
                         System.err.println("Не удалось отправить сообщение сессии " + s.getId());
@@ -340,6 +349,7 @@ public class GameWebSocketHandler extends TextWebSocketHandler {
                     try {
                         if (s.isOpen()) {
                             s.sendMessage(jsonMessage);
+                            System.out.println("To client lobby size " + jsonMessage.getPayloadLength());
                         }
                     } catch (IOException e) {
                         System.err.println("Не удалось отправить сообщение сессии " + s.getId());
