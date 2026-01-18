@@ -415,18 +415,15 @@ public class GameService {
     }//Идентичное по функционалу
     //Не меняем состояние
     private boolean gameIsActive(GameState state){
-        int activePlayer = state.getAlive().indexOf(true);
-        if(activePlayer == 3 || activePlayer == -1) return false;
-        return switch (state.getCommands()) {
-            case Command.NONE ->
-                    state.getAlive().get((activePlayer + 1) % 4) || state.getAlive().get((activePlayer + 2) % 4) || state.getAlive().get((activePlayer + 3) % 4);
-            case Command.OPPOSITE_SIDES ->
-                    state.getAlive().get((activePlayer + 1) % 4) || state.getAlive().get((activePlayer + 3) % 4);
-            case Command.ADJACENT_SIDES -> {
-                if (activePlayer > 1) yield false;
-                yield state.getAlive().get(2) || state.getAlive().get(3);
+        List<Boolean> alive = state.getAlive();
+        for (int i = 0; i < alive.size(); i++) {
+            if (!alive.get(i)) continue;
+            for (int j = i + 1; j < alive.size(); j++) {
+                if (alive.get(j) && state.isEnemies(i, j)) {
+                    return true; // Нашли двух живых врагов — игра продолжается
+                }
             }
-            default -> false;
-        };
+        }
+        return false;
     }//Идентичное по функционалу
 }
