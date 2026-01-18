@@ -42,7 +42,7 @@ public class GameService {
         ChessPiece piece = board.get(fromIndex);
         if (piece == null) return null;
         //TODO Здесь должна быть проверка на валидность
-        if(!getTruePossibleMoves(fromIndex, currentState).contains(toIndex)) return null;
+        //if(!getTruePossibleMoves(fromIndex, currentState).contains(toIndex)) return null;
 
         if (board.get(toIndex) != null &&
                 board.get(toIndex).getOwner() == currentState.getCurrentPlayer() &&
