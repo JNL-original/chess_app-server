@@ -118,7 +118,8 @@ public class GameWebSocketHandler extends TextWebSocketHandler {
                         room.getState().setTurn(room.getState().getTurn()+1);//todo с turn надо разобраться
                         newResponse.put("turn", room.getState().getTurn());
                         newResponse.put("ready", room.getReadyIndexes());
-
+                        newResponse.put("colors", room.getState().getConfig().getPlayerColors());
+                        newResponse.put("names", room.getState().getConfig().getPlayerNames());
                         TextMessage newJsonMessage =  new TextMessage(objectMapper.writeValueAsString(newResponse));
                         room.getSessions().forEach(s -> {
                             try {
