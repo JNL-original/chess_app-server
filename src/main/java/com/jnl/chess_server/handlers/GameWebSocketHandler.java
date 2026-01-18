@@ -111,15 +111,34 @@ public class GameWebSocketHandler extends TextWebSocketHandler {
         synchronized (room){
             if(type.equals("connect")){
                 room.addPlayer(session);
-                Map<String, Object> response = new HashMap<>();
-
-                response.put("type", "sync");
-                response.put("data", room.getState().toBuilder().myPlayerIndex(room.getPlayerIndex(token)).build());//-1 если зритель
-                if(room.getState().getStatus().equals(GameStatus.LOBBY)) response.put("ready", room.getReadyIndexes());
-
-                TextMessage jsonMessage =  new TextMessage(objectMapper.writeValueAsString(response));
                 try {
+                    if(room.getState().getStatus().equals(GameStatus.LOBBY)) {
+                        Map<String, Object> newResponse = new HashMap<>();
+                        newResponse.put("type", "lobby");
+                        room.getState().setTurn(room.getState().getTurn()+1);//todo с turn надо разобраться
+                        newResponse.put("turn", room.getState().getTurn());
+                        newResponse.put("ready", room.getReadyIndexes());
+
+                        TextMessage newJsonMessage =  new TextMessage(objectMapper.writeValueAsString(newResponse));
+                        room.getSessions().forEach(s -> {
+                            try {
+                                if (s.isOpen() && !session.equals(s)) {
+                                    s.sendMessage(newJsonMessage);
+                                }
+                            } catch (IOException e) {
+                                System.err.println("Не удалось отправить сообщение сессии " + s.getId());
+                            }
+                        });
+                        System.out.println("To client lobby size " + newJsonMessage.getPayloadLength());
+                    }
                     if (session.isOpen()) {
+
+                        Map<String, Object> response = new HashMap<>();
+                        response.put("type", "sync");
+                        if(room.getState().getStatus().equals(GameStatus.LOBBY)) response.put("ready", room.getReadyIndexes());
+                        response.put("data", room.getState().toBuilder().myPlayerIndex(room.getPlayerIndex(token)).build());//-1 если зритель
+
+                        TextMessage jsonMessage =  new TextMessage(objectMapper.writeValueAsString(response));
                         session.sendMessage(jsonMessage);
                         System.out.println("To client sync size " + jsonMessage.getPayloadLength());
                     }
