@@ -1,0 +1,9 @@
+services:
+  chess-server:
+    build: .
+    container_name: chess_server_container
+    ports:
+      - "25252:25252"
+    environment:
+      - SERVER_PORT=25252
+    restart: always
